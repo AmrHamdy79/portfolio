@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amr Elsebai · AI Developer & Software Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060a0f;
+    --surface: #0d1520;
+    --surface2: #111a28;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --green: #10b981;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: rgba(0,229,255,0.1);
+    --border2: rgba(255,255,255,0.06);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; mix-blend-mode: screen; transition: transform 0.08s; }
+  .cursor-ring { width: 34px; height: 34px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; opacity: 0.4; transition: width 0.2s, height 0.2s, opacity 0.2s; }
+
+  /* Background grid */
+  body::after { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 64px 64px; pointer-events: none; z-index: 0; }
+
+  /* Noise */
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"); pointer-events: none; z-index: 100; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; width: 100%; z-index: 500; display: flex; justify-content: space-between; align-items: center; padding: 1.1rem 3rem; background: rgba(6,10,15,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--accent); letter-spacing: 0.05em; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { padding: 0.5rem 1.2rem; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: flex; align-items: center; padding: 7rem 3rem 4rem; position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; gap: 4rem; }
+  .hero-left { flex: 1; }
+  .hero-right { flex: 0 0 320px; display: none; }
+  @media(min-width: 1000px) { .hero-right { display: flex; flex-direction: column; gap: 1rem; } }
+
+  .hero-tag { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); padding: 0.35rem 1rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--green); margin-bottom: 2rem; animation: fadeUp 0.7s ease both; }
+  .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+
+  .hero-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3.5rem, 8vw, 6.5rem); line-height: 0.92; letter-spacing: -0.04em; color: #fff; animation: fadeUp 0.7s 0.1s ease both; margin-bottom: 0.6rem; }
+  .hero-name em { color: var(--accent); font-family: 'Instrument Serif', serif; font-style: italic; display: block; }
+
+  .hero-subtitle { font-size: clamp(0.8rem, 1.5vw, 1rem); color: var(--muted); margin-bottom: 1.5rem; animation: fadeUp 0.7s 0.2s ease both; letter-spacing: 0.05em; }
+  .hero-subtitle span { color: var(--accent); }
+
+  .hero-desc { font-size: 0.82rem; line-height: 1.9; color: #8fa3ba; max-width: 520px; margin-bottom: 2.5rem; animation: fadeUp 0.7s 0.3s ease both; }
+
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.7s 0.4s ease both; }
+  .btn { padding: 0.8rem 1.8rem; font-family: 'Space Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.22s; }
+  .btn-primary { background: var(--accent); color: var(--bg); font-weight: 700; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
+  .btn-primary:hover { background: #fff; transform: translateY(-2px); }
+  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  /* Hero right panel — stat cards */
+  .stat-mini { background: var(--surface); border: 1px solid var(--border2); padding: 1.2rem 1.5rem; animation: fadeUp 0.7s ease both; }
+  .stat-mini:nth-child(1) { animation-delay: 0.5s; }
+  .stat-mini:nth-child(2) { animation-delay: 0.6s; }
+  .stat-mini:nth-child(3) { animation-delay: 0.7s; }
+  .stat-mini:nth-child(4) { animation-delay: 0.8s; }
+  .stat-mini-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-mini-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.3rem; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border2); max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* SECTION */
+  section { position: relative; z-index: 1; }
+  .section-wrap { max-width: 1400px; margin: 0 auto; padding: 6rem 3rem; }
+  .section-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-label::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+  .section-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; letter-spacing: -0.03em; margin-bottom: 3rem; color: #fff; }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── SKILLS ── */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1px; background: var(--border2); border: 1px solid var(--border2); }
+  .skill-card { background: var(--bg); padding: 1.8rem 2rem; transition: background 0.3s; position: relative; overflow: hidden; }
+  .skill-card:hover { background: var(--surface); }
+  .skill-card::after { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 0; background: var(--accent); transition: height 0.35s; }
+  .skill-card:hover::after { height: 100%; }
+  .skill-icon { font-size: 1.6rem; margin-bottom: 0.8rem; }
+  .skill-name { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+  .skill-desc { font-size: 0.75rem; line-height: 1.75; color: var(--muted); margin-bottom: 0.8rem; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tag { font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.18rem 0.55rem; border: 1px solid var(--border); color: var(--muted); }
+
+  /* ── PROJECTS ── */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.25rem; }
+  .project-card { background: var(--surface); border: 1px solid var(--border2); padding: 2rem; position: relative; overflow: hidden; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; }
+  .project-card:hover { transform: translateY(-5px); border-color: rgba(0,229,255,0.25); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transform: scaleX(0); transform-origin: left; transition: transform 0.35s; }
+  .project-card:hover::before { transform: scaleX(1); }
+  .project-card.featured { background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,229,255,0.04)); border-color: rgba(124,58,237,0.2); }
+  .project-num { font-size: 0.58rem; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.8rem; }
+  .project-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.65rem; line-height: 1.3; }
+  .project-desc { font-size: 0.76rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.2rem; }
+  .project-tech { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .tech-badge { font-size: 0.56rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.22rem 0.65rem; background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.12); color: var(--accent); }
+  .featured-badge { position: absolute; top: 1rem; right: 1rem; font-size: 0.52rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.2rem 0.6rem; background: var(--accent3); color: var(--bg); font-weight: 700; }
+
+  /* ── SKILLS TABLE ── */
+  .skills-table { width: 100%; border-collapse: collapse; }
+  .skills-table tr { border-bottom: 1px solid var(--border2); }
+  .skills-table tr:last-child { border-bottom: none; }
+  .skills-table td { padding: 1rem 0; font-size: 0.78rem; vertical-align: top; }
+  .skills-table td:first-child { color: var(--accent); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; width: 150px; padding-right: 2rem; white-space: nowrap; }
+  .skills-table td:last-child { color: #94a3b8; line-height: 1.7; }
+
+  /* ── EXPERIENCE TIMELINE ── */
+  .timeline { border-left: 1px solid var(--border); padding-left: 2rem; }
+  .tl-item { position: relative; margin-bottom: 2.5rem; }
+  .tl-item::before { content: ''; position: absolute; left: -2.45rem; top: 0.4rem; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 12px var(--accent); }
+  .tl-period { font-size: 0.62rem; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 0.3rem; text-transform: uppercase; }
+  .tl-role { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem; }
+  .tl-org { font-size: 0.75rem; color: var(--accent2); margin-bottom: 0.5rem; }
+  .tl-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.75; }
+  .tl-bullets { list-style: none; margin-top: 0.5rem; }
+  .tl-bullets li { font-size: 0.74rem; color: var(--muted); line-height: 1.7; padding-left: 1rem; position: relative; }
+  .tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.65rem; }
+
+  /* ── CERTS ── */
+  .cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.75rem; }
+  .cert-item { padding: 1rem 1.25rem; border: 1px solid var(--border2); border-left: 3px solid var(--accent); }
+  .cert-item.purple { border-left-color: var(--accent2); }
+  .cert-source { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
+  .cert-item.purple .cert-source { color: var(--accent2); }
+  .cert-name { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: #fff; }
+
+  /* ── CONTACT ── */
+  .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  @media(max-width: 768px) { .contact-layout { grid-template-columns: 1fr; gap: 2rem; } }
+  .contact-headline { font-family: 'Instrument Serif', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: #fff; line-height: 1.3; margin-bottom: 1.2rem; }
+  .contact-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.9; max-width: 380px; }
+  .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
+  .contact-link { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; border: 1px solid var(--border2); text-decoration: none; color: var(--text); transition: all 0.22s; }
+  .contact-link:hover { border-color: var(--accent); color: var(--accent); transform: translateX(5px); }
+  .cl-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+  .cl-label { font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.15rem; }
+  .cl-value { font-size: 0.78rem; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border2); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; font-size: 0.68rem; color: var(--muted); flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1; }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+  /* MOBILE */
+  @media(max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links, .nav-cta { display: none; }
+    .hero { padding: 5rem 1.5rem 3rem; flex-direction: column; }
+    .section-wrap { padding: 4rem 1.5rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .skills-table td:first-child { width: 110px; }
+    footer { padding: 1.5rem; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AMR.AI</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="/cdn-cgi/l/email-protection#422f2b302d2a232f263b727102252f232b2e6c212d2f" class="nav-cta">Hire Me</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Open to AI Developer · ML Engineer · Software Engineer roles</div>
+    <h1 class="hero-name">Amr<em>Elsebai</em></h1>
+    <p class="hero-subtitle">
+      <span>AI Developer</span> · ML Engineer · LLM Specialist · Software Engineer
+    </p>
+    <p class="hero-desc">
+      Electronics & Communications Engineering student at Cairo University (3rd year, 2022–2027). Building real-world AI systems — from multilingual RAG pipelines and LLM apps to medical computer vision and hardware design tools. 126 hours of Generative AI internship. 10+ deployed projects.
+    </p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-primary">View Projects ↓</a>
+      <a href="https://github.com/AmrHamdy79" target="_blank" class="btn btn-outline">GitHub ↗</a>
+      <a href="/cdn-cgi/l/email-protection#375a5e45585f565a534e070477505a565e5b1954585a" class="btn btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat-mini">
+      <div class="stat-mini-num">10+</div>
+      <div class="stat-mini-label">AI / Software Projects</div>
+    </div>
+    <div class="stat-mini">
+      <div class="stat-mini-num">6</div>
+      <div class="stat-mini-label">LLM Production Apps</div>
+    </div>
+    <div class="stat-mini">
+      <div class="stat-mini-num">126h</div>
+      <div class="stat-mini-label">Gen AI Internship</div>
+    </div>
+    <div class="stat-mini">
+      <div class="stat-mini-num">95%</div>
+      <div class="stat-mini-label">Medical AI Accuracy</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-wrap">
+    <div class="section-label reveal">Expertise</div>
+    <h2 class="section-title reveal">What I Build With</h2>
+    <div class="skills-grid reveal">
+      <div class="skill-card">
+        <div class="skill-icon">🧠</div>
+        <div class="skill-name">AI / Machine Learning</div>
+        <div class="skill-desc">LLMs, RAG pipelines, CNNs, predictive modeling, medical image analysis, disease monitoring, NLP, and model accuracy evaluation.</div>
+        <div class="skill-tags">
+          <span class="tag">LangChain</span><span class="tag">Hugging Face</span><span class="tag">Qwen2.5</span><span class="tag">Mistral-7B</span><span class="tag">BART</span><span class="tag">Whisper</span><span class="tag">RAG</span><span class="tag">FAISS</span><span class="tag">ChromaDB</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">Full-Stack AI Apps</div>
+        <div class="skill-desc">End-to-end production AI applications with REST APIs, real-time streaming, GPU optimization via Kaggle/ngrok, and polished UIs.</div>
+        <div class="skill-tags">
+          <span class="tag">Flask</span><span class="tag">FastAPI</span><span class="tag">Streamlit</span><span class="tag">React</span><span class="tag">ngrok</span><span class="tag">REST APIs</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">💻</div>
+        <div class="skill-name">Programming Languages</div>
+        <div class="skill-desc">Strong software engineering foundation with OOP, design patterns, memory management, testing, and secure coding practices.</div>
+        <div class="skill-tags">
+          <span class="tag">Python</span><span class="tag">C++ (OOP/STL)</span><span class="tag">C</span><span class="tag">JavaScript</span><span class="tag">Java</span><span class="tag">C#</span><span class="tag">SQL</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🔷</div>
+        <div class="skill-name">Digital Design & FPGA</div>
+        <div class="skill-desc">RTL design, FPGA flow with Vivado, STA, clock domain crossing, formal verification with Questa tools.</div>
+        <div class="skill-tags">
+          <span class="tag">Verilog HDL</span><span class="tag">Vivado</span><span class="tag">QuestaSim</span><span class="tag">RTL Synthesis</span><span class="tag">STA</span><span class="tag">Formal Verification</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">✅</div>
+        <div class="skill-name">Digital Verification</div>
+        <div class="skill-desc">Full UVM-based verification environments, constrained random stimulus, functional coverage, SystemVerilog assertions.</div>
+        <div class="skill-tags">
+          <span class="tag">SystemVerilog</span><span class="tag">UVM</span><span class="tag">SVA</span><span class="tag">Functional Coverage</span><span class="tag">TLM</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🔧</div>
+        <div class="skill-name">Embedded & Hardware</div>
+        <div class="skill-desc">FreeRTOS, ESP32, PCB design, analog design with Cadence, power electronics, MIMO, 5G core, and antenna design.</div>
+        <div class="skill-tags">
+          <span class="tag">FreeRTOS</span><span class="tag">ESP32</span><span class="tag">Embedded C</span><span class="tag">Cadence</span><span class="tag">MATLAB</span><span class="tag">Altium</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full skill breakdown table -->
+    <div style="margin-top: 4rem;" class="reveal">
+      <div class="section-label" style="margin-bottom: 1.5rem;">Full Skill Breakdown</div>
+      <table class="skills-table">
+        <tr><td>AI / ML</td><td>Machine Learning, Deep Learning, CNNs, LLMs, RAG, Predictive Modeling, Medical Image Analysis, NLP, Transformers (BART, Qwen, Mistral), Vector Databases (FAISS, ChromaDB), LangChain, Hugging Face</td></tr>
+        <tr><td>Languages</td><td>Python (primary), C++ (OOP, STL, Design Patterns), C, JavaScript (basics), Java (basics), C# (basics), SQL / SQLite</td></tr>
+        <tr><td>Web / APIs</td><td>Flask, FastAPI, Streamlit, React, REST APIs, ngrok tunneling, HTML/CSS</td></tr>
+        <tr><td>Digital Design</td><td>Verilog HDL, FPGA Design Flow (Vivado), RTL Synthesis, Static Timing Analysis, Clock Domain Crossing, Formal Verification (Questa Lint / CDC / RDC)</td></tr>
+        <tr><td>Verification</td><td>SystemVerilog, UVM (components, sequences, TLM, factory, phasing), Functional Coverage, Constrained Random Stimulus, SVA Assertions</td></tr>
+        <tr><td>Embedded / HW</td><td>FreeRTOS, ESP32, Embedded C, Analog Design (Cadence Virtuoso), Power Electronics, MIMO, 5G Core, Antenna Design</td></tr>
+        <tr><td>Tools & IDEs</td><td>Visual Studio, Qt, Vivado, QuestaSim, MATLAB, Altium Designer, Proteus, MULTISIM, CST, Altair FEKO, Cadence, ModelSim, XAMP, Eclipse</td></tr>
+        <tr><td>Dev Practices</td><td>Git, GitHub, GitHub Actions (CI/CD), Google Test (TDD), Secure Coding, Packaging & Deployment, Docker basics</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-wrap">
+    <div class="section-label reveal">Portfolio</div>
+    <h2 class="section-title reveal">AI & Software Projects</h2>
+    <div class="projects-grid reveal">
+
+      <div class="project-card featured">
+        <div class="featured-badge">⭐ Featured</div>
+        <div class="project-num">01 · Internship · Tips Hindawi · Gen AI</div>
+        <div class="project-title">AI Cancer Treatment Prediction & Medical Image Analysis</div>
+        <div class="project-desc">AI model predicting chemotherapy response, analyzing CT/MRI scans via CNNs, calculating optimal dosages, monitoring disease progression, and staging cancer. Achieves 80–95% accuracy with imaging, 70–85% with clinical data alone. Recognized by Dr. Ahmed AbdelWahid, Zagazig University Faculty of Medicine.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Python</span><span class="tech-badge">CNN</span><span class="tech-badge">Deep Learning</span><span class="tech-badge">TensorFlow</span><span class="tech-badge">Medical Imaging</span><span class="tech-badge">Predictive Modeling</span>
+        </div>
+      </div>
+
+      <div class="project-card featured">
+        <div class="featured-badge">⭐ Featured</div>
+        <div class="project-num">02 · Internship · Tips Hindawi · Gen AI</div>
+        <div class="project-title">AI Video Summarization Tool</div>
+        <div class="project-desc">Web app that downloads YouTube audio, transcribes speech with Faster-Whisper (OpenAI), summarizes using Facebook's BART transformer, and exports professionally formatted PDF reports with full transcript. Features real-time progress tracking via multi-threading.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Flask</span><span class="tech-badge">Faster-Whisper</span><span class="tech-badge">BART Transformer</span><span class="tech-badge">PyTorch</span><span class="tech-badge">yt-dlp</span><span class="tech-badge">ReportLab</span>
+        </div>
+      </div>
+
+      <div class="project-card featured">
+        <div class="featured-badge">⭐ Featured</div>
+        <div class="project-num">03 · Internship · Tips Hindawi · RAG · Multilingual</div>
+        <div class="project-title">Multilingual RAG Document Intelligence System</div>
+        <div class="project-desc">Full-stack RAG system supporting Arabic & English documents. Features automatic language detection, RTL-adaptive UI, semantic search across multiple PDFs, Google Drive links, and web URLs. 100% local processing, GPU acceleration supported. Architecture: React + Flask + FAISS.</div>
+        <div class="project-tech">
+          <span class="tech-badge">React</span><span class="tech-badge">Flask</span><span class="tech-badge">FAISS</span><span class="tech-badge">Qwen2.5</span><span class="tech-badge">LangChain</span><span class="tech-badge">Arabic NLP</span><span class="tech-badge">RAG</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">04 · Internship · Tips Hindawi · LLM</div>
+        <div class="project-title">AI CV Intelligence & Structured Data Extraction</div>
+        <div class="project-desc">LLM-powered CV parser transforming any PDF resume into structured JSON. No regex, no templates — the model reads and understands the CV. Extracts name, email, education, skills, and experience. Remote GPU inference via ngrok tunnel to Kaggle.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Streamlit</span><span class="tech-badge">FastAPI</span><span class="tech-badge">Qwen2.5-3B-Instruct</span><span class="tech-badge">LangChain</span><span class="tech-badge">PyPDFLoader</span><span class="tech-badge">ngrok</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">05 · Internship · Tips Hindawi · Final Project</div>
+        <div class="project-title">AI Business Model Generator</div>
+        <div class="project-desc">Transforms business documents (PDF/Excel/Word) into a complete strategy: Business Model Canvas (9 sections), full business plan, AI-prioritized recommendations, and step-by-step action plan. 8-bit quantized Mistral-7B on Kaggle T4 GPU, RAG with ChromaDB.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Streamlit</span><span class="tech-badge">Flask</span><span class="tech-badge">Mistral-7B</span><span class="tech-badge">ChromaDB</span><span class="tech-badge">LangChain</span><span class="tech-badge">sentence-transformers</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">06 · Internship · Tips Hindawi · Hardware AI</div>
+        <div class="project-title">Verilog RTL Design Assistant with Self-Correction Pipeline</div>
+        <div class="project-desc">LLM-backed tool for synthesizable Verilog-2001 RTL generation. Includes static RTL rules enforcer and automated compile-time feedback loop via Icarus Verilog — correcting errors before the user sees them. Knowledge base from 3 RTL textbooks.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Mistral-Nemo</span><span class="tech-badge">FastAPI</span><span class="tech-badge">Streamlit</span><span class="tech-badge">Icarus Verilog</span><span class="tech-badge">ngrok</span><span class="tech-badge">Verilog-2001</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">07 · Digital Design · FPGA</div>
+        <div class="project-title">DSP48A1 Slice on Spartan-6 FPGA</div>
+        <div class="project-desc">Full FPGA design flow: synthesis, implementation, and verification of the DSP48A1 arithmetic slice on Spartan-6. Verified using QuestaSim and Vivado including debug core integration.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Vivado</span><span class="tech-badge">QuestaSim</span><span class="tech-badge">Verilog HDL</span><span class="tech-badge">FPGA</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">08 · Digital Verification · SPI</div>
+        <div class="project-title">End-to-End UVM Verification of SPI Communication System</div>
+        <div class="project-desc">Complete UVM verification environment for SPI. Developed verification plan, functional coverage model, constrained random stimulus, and SystemVerilog assertions. Includes SPI Slave with FSM and Single Port RAM.</div>
+        <div class="project-tech">
+          <span class="tech-badge">SystemVerilog</span><span class="tech-badge">UVM</span><span class="tech-badge">QuestaSim</span><span class="tech-badge">SVA</span><span class="tech-badge">FSM</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">09 · Embedded Systems · FreeRTOS</div>
+        <div class="project-title">FreeRTOS Reliable Data Communication Simulation</div>
+        <div class="project-desc">Simulated Send-and-Wait and Go-Back-N protocols using FreeRTOS queues, timers, and semaphores for performance analysis over unreliable networks. Compares throughput, reliability, and efficiency of both protocols.</div>
+        <div class="project-tech">
+          <span class="tech-badge">FreeRTOS</span><span class="tech-badge">C</span><span class="tech-badge">Embedded Systems</span><span class="tech-badge">Protocol Design</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">10 · IoT · Communication Systems</div>
+        <div class="project-title">Smart Lake Monitoring Communication System</div>
+        <div class="project-desc">Dual-node water level monitoring using ESP32 microcontrollers and custom-designed PCBs. Responsible for developing the full communication layer between nodes and the cloud server for real-time environmental data.</div>
+        <div class="project-tech">
+          <span class="tech-badge">ESP32</span><span class="tech-badge">PCB Design</span><span class="tech-badge">Cloud</span><span class="tech-badge">Embedded C</span><span class="tech-badge">IoT</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">11 · Analog Design · CMOS</div>
+        <div class="project-title">Voltage-Controlled Ring Oscillator — CMOS Analog Design</div>
+        <div class="project-desc">Parameter analysis vs W/L ratio, precision current mirror design, and seven-stage ring oscillator implementation using Cadence Virtuoso.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Cadence Virtuoso</span><span class="tech-badge">CMOS</span><span class="tech-badge">Analog Design</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">12 · Signal Processing · Healthcare</div>
+        <div class="project-title">Heart Rate Monitoring via ECG Signals</div>
+        <div class="project-desc">Real-time ECG signal processing system for heart rate monitoring with ML-assisted anomaly detection and health insight generation.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Python</span><span class="tech-badge">MATLAB</span><span class="tech-badge">Signal Processing</span><span class="tech-badge">ML</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-wrap">
+    <div class="section-label reveal">Background</div>
+    <h2 class="section-title reveal">Education & Experience</h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem; align-items: start;" class="reveal">
+      <!-- Timeline -->
+      <div>
+        <div class="section-label" style="margin-bottom: 2rem;">Career Timeline</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-period">2022 → 2027</div>
+            <div class="tl-role">B.Sc. Electronics & Electrical Communication Engineering</div>
+            <div class="tl-org">Cairo University, Faculty of Engineering · 3rd Year</div>
+            <div class="tl-desc">Deep focus on AI, digital design, signal processing, embedded systems, analog design, MIMO, 5G, and antenna systems.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-period">Dec 2025 – Feb 2026</div>
+            <div class="tl-role">Generative AI Intern</div>
+            <div class="tl-org">Tips Hindawi · 126 Hours</div>
+            <ul class="tl-bullets">
+              <li>Delivered 6 production-grade AI projects end-to-end</li>
+              <li>Built LLM apps using Mistral-7B, Qwen2.5, BART, and Whisper</li>
+              <li>Designed RAG pipelines with LangChain, FAISS, and ChromaDB</li>
+              <li>Deployed remote GPU inference (Kaggle T4) via FastAPI + ngrok</li>
+              <li>Built full-stack apps: Streamlit, Flask, React frontends</li>
+            </ul>
+          </div>
+          <div class="tl-item">
+            <div class="tl-period">Aug 2022 – Jun 2023</div>
+            <div class="tl-role">Private Mathematics Tutor</div>
+            <div class="tl-org">Self-Employed</div>
+            <div class="tl-desc">One-on-one math sessions for high school students. Improved performance and built strong communication and teaching skills.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-period">Jul 2023 – Aug 2023</div>
+            <div class="tl-role">Civil Engineering Assistant</div>
+            <div class="tl-org">On-Site Contractor</div>
+            <div class="tl-desc">Handled on-site problem-solving and coordination tasks in a fast-paced engineering environment.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certs + Languages -->
+      <div>
+        <div class="section-label" style="margin-bottom: 1.5rem;">Certifications & Training</div>
+        <div class="cert-grid" style="grid-template-columns: 1fr;">
+          <div class="cert-item">
+            <div class="cert-source">Coursera / DeepLearning.AI</div>
+            <div class="cert-name">Machine Learning Specialization</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-source">DeepLearning.AI</div>
+            <div class="cert-name">Deep Learning Specialization</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-source">Udacity</div>
+            <div class="cert-name">AI Programming with Python</div>
+          </div>
+          <div class="cert-item purple">
+            <div class="cert-source">Intensive Training · 6 Weeks</div>
+            <div class="cert-name">Digital Design — Verilog HDL & FPGA (Vivado)</div>
+          </div>
+          <div class="cert-item purple">
+            <div class="cert-source">Intensive Training · 6 Weeks</div>
+            <div class="cert-name">Digital Verification — SystemVerilog & UVM</div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top: 2.5rem; margin-bottom: 1.2rem;">Languages</div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; padding: 0.7rem 1rem; border: 1px solid var(--border2); font-size: 0.78rem;">
+            <span style="color: #fff; font-weight: 700;">Arabic</span>
+            <span style="color: var(--accent); font-size: 0.65rem; letter-spacing: 0.1em;">NATIVE</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 0.7rem 1rem; border: 1px solid var(--border2); font-size: 0.78rem;">
+            <span style="color: #fff; font-weight: 700;">English</span>
+            <span style="color: var(--accent); font-size: 0.65rem; letter-spacing: 0.1em;">FLUENT</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 0.7rem 1rem; border: 1px solid var(--border2); font-size: 0.78rem;">
+            <span style="color: #fff; font-weight: 700;">French</span>
+            <span style="color: var(--muted); font-size: 0.65rem; letter-spacing: 0.1em;">A2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-wrap">
+    <div class="section-label reveal">Let's Connect</div>
+    <div class="contact-layout reveal">
+      <div>
+        <p class="contact-headline">Ready to build something intelligent together?</p>
+        <p class="contact-sub">I'm actively seeking AI Developer, AI Specialist, and Software Engineer roles. Whether it's LLM applications, RAG systems, computer vision, or full-stack AI — let's talk.</p>
+      </div>
+      <div class="contact-links">
+        <a href="/cdn-cgi/l/email-protection#365b5f44595e575b524f060576515b575f5a1855595b" class="contact-link">
+          <span class="cl-icon">✉</span>
+          <div><span class="cl-label">Email</span><span class="cl-value"><span class="__cf_email__" data-cfemail="81ece8f3eee9e0ece5f8b1b2c1e6ece0e8edafe2eeec">[email&#160;protected]</span></span></div>
+        </a>
+        <a href="https://www.linkedin.com/in/amr-elsebai-0a781b27b" target="_blank" class="contact-link">
+          <span class="cl-icon">in</span>
+          <div><span class="cl-label">LinkedIn</span><span class="cl-value">linkedin.com/in/amr-elsebai-0a781b27b</span></div>
+        </a>
+        <a href="https://github.com/AmrHamdy79" target="_blank" class="contact-link">
+          <span class="cl-icon">⌥</span>
+          <div><span class="cl-label">GitHub</span><span class="cl-value">github.com/AmrHamdy79</span></div>
+        </a>
+        <a href="https://amrhamdy79.github.io/portfolio/" target="_blank" class="contact-link">
+          <span class="cl-icon">🌐</span>
+          <div><span class="cl-label">Portfolio</span><span class="cl-value">amrhamdy79.github.io/portfolio</span></div>
+        </a>
+        <a href="tel:+201015558152" class="contact-link">
+          <span class="cl-icon">📱</span>
+          <div><span class="cl-label">Phone</span><span class="cl-value">+20 1015558152</span></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Amr Elsebai · AI Developer & Software Engineer</span>
+  <span>Cairo, Egypt 🇪🇬</span>
+  <span>Built with precision — <a href="/cdn-cgi/l/email-protection#fe93978c91969f939a87cecdbe99939f9792d09d9193">hire me</a></span>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+  });
+  function animRing() {
+    rx += (mx - rx) * 0.11;
+    ry += (my - ry) * 0.11;
+    ring.style.transform = `translate(${rx - 17}px, ${ry - 17}px)`;
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+  document.querySelectorAll('a, .project-card, .skill-card, .contact-link').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.width = '56px'; ring.style.height = '56px'; ring.style.opacity = '0.7'; });
+    el.addEventListener('mouseleave', () => { ring.style.width = '34px'; ring.style.height = '34px'; ring.style.opacity = '0.4'; });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
